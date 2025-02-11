@@ -1,0 +1,47 @@
+{% extends "parent/base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="md:w-2/3 lg:w-1/2 my-6 mx-auto p-6 bg-blue-100 rounded-xl">
+        <center><h1 class='mb-6 mx-0 text-4xl font-bold '>Log In</h1></center>
+
+        <form method="post" dir="">
+            {% csrf_token %}
+            <div class="flex flex-col items-center space-y-4">
+                <!-- Username Field -->
+                <div class="flex justify-between items-center w-72">
+                    <label class="text-left w-1/3">Username:</label>
+                    <div class="w-2/3">
+                        {{ form.username }}
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div class="flex justify-between items-center w-72">
+                    <label class="text-left w-1/3">Password:</label>
+                    <div class="w-2/3 relative">
+                        {{ form.password }}
+                        <span
+                            toggle="#password-field"
+                            class="fa fa-fw fa-eye field-icon toggle-password absolute right-2 top-2 cursor-pointer">
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Error Messages -->
+                {% if form.non_field_errors or form.errors %}
+                <div class="bg-red-100 text-red-700 p-4 rounded-md w-72">
+                    {% for field in form %}
+                        {{ field.errors }}
+                    {% endfor %}
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+            <button type="submit" class="inline-block py-2 px-4 my-2 bg-blue-950 text-white rounded-xl">Log In</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,23 @@
+{% extends "parent/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<div class=" bg-neutral-200 rounded-xl p-4 my-2 mx-1 text-center">
+    {% if user.is_authenticated %}
+            <p class="p-6 my-6 inline-block bg-blue-200 rounded-xl text-4xl font-bold">
+                Hi {{ user.username }}!
+            </p>
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit"class="p-3 inline-block bg-red-500 rounded-xl">Log Out</button>
+            </form>
+    {% else %}
+       <center> <p class="p-3  my-2 inline-block  bg-yellow-500 rounded-xl">You are not logged in!</p> </center>
+        <a href="{% url 'login' %}" class="inline-block p-3 my-2 bg-lime-600 text-white rounded-xl">Log In</a>
+    {% endif %}
+</div>
+
+
+{% endblock %}
