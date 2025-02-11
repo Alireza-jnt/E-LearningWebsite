@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from authentication.models import User
 from .course_models import Course, CourseSection
 
 class Enrollment(models.Model):

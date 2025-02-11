@@ -28,17 +28,16 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'authentication', #Mine
-    'core',
-    # 'course'
+    'authentication.apps.AuthenticationConfig', #Mine
+    "core.apps.CoreConfig",
+    "course.apps.CourseConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # "core.apps.CoreConfig",
-    "course.apps.CourseConfig",
+
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
