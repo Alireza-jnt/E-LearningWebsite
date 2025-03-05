@@ -48,8 +48,10 @@ class NotificationTypes(models.Model):
     )
     default_enabled = models.BooleanField(default=True)
 
-def get_default_role():
-    return Role.objects.get_or_create(id=3, defaults={'name': 'Default Role'})[0]
+#ToDo
+# def get_default_role():
+#     return Role.objects.get_or_create(id=3, defaults={'name': 'Default Role'})[0]
+get_default_role = 3
 
 class User(AbstractUser):
     GENDER_CHOICES = [
@@ -65,7 +67,7 @@ class User(AbstractUser):
     role = models.ForeignKey(
         'Role',
         on_delete=models.PROTECT,
-        default=get_default_role  # Use the callable here
+        default= get_default_role  # Use the callable here
     )
     mobile = models.CharField(max_length=255, unique=True, blank=True)
     is_deleted = models.BooleanField(default=False)

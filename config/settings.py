@@ -28,6 +28,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'django_extensions', #ToDo remove this for final project
     'authentication.apps.AuthenticationConfig', #Mine
     "core.apps.CoreConfig",
     "course.apps.CourseConfig",

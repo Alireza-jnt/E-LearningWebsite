@@ -1,25 +1,25 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiResponse
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+# from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiResponse
+# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .serializers import UserSerializer, UserRegistrationSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.authentication import BasicAuthentication
+# from rest_framework_simplejwt.views import TokenObtainPairView
+# from rest_framework.authentication import BasicAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import update_last_login
-from drf_spectacular.types import OpenApiTypes
-from django.shortcuts import render, redirect
+# from django.contrib.auth.models import update_last_login
+# from drf_spectacular.types import OpenApiTypes
+# from django.shortcuts import render, redirect
 from rest_framework.response import Response
 from rest_framework import generics, status
-from rest_framework.views import APIView
-from authentication.models import *
-from django.http import request
+# from rest_framework.views import APIView
+# from authentication.models import *
+# from django.http import request
 from django.urls import reverse
 from .models import User
-from drf_spectacular.utils import (
-    extend_schema,
-    OpenApiParameter,
-    OpenApiExample,
-)
+# from drf_spectacular.utils import (
+#     extend_schema,
+#     OpenApiParameter,
+#     OpenApiExample,
+# )
 
 
 
@@ -54,90 +54,87 @@ class UserProfileView(generics.RetrieveAPIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-
-
 class LogoutView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     #region schema
-
-    @extend_schema(
-        summary="Log Out User",
-        description=(
-            "Logs out the user by blacklisting the provided refresh token. "
-            "The user must be authenticated, and the `Authorization` header must include a valid access token in the format: `Bearer <access_token>`. "
-            "In the request body, provide the refresh token as `{ \"refresh\": \"<refresh_token>\" }`."
-        ),
-        request={
-            "application/json": {
-                "type": "object",
-                "properties": {
-                    "refresh": {
-                        "type": "string",
-                        "description": "The refresh token to be blacklisted for logout.",
-                    },
-                },
-                "required": ["refresh"],
-            }
-        },
-        parameters=[
-            OpenApiParameter(
-                name="Authorization",
-                location=OpenApiParameter.HEADER,
-                description="Bearer <access_token>",
-                required=True,
-                type=OpenApiTypes.STR,
-            ),
-        ],
-        responses={
-            205: OpenApiResponse(
-                response={
-                    "type": "object",
-                    "properties": {
-                        "message": {
-                            "type": "string",
-                            "example": "Successfully logged out",
-                        },
-                    },
-                },
-                description="Successfully logged out.",
-            ),
-            400: OpenApiResponse(
-                response={
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string",
-                            "example": "Refresh token is required",
-                        },
-                    },
-                },
-                description="Error occurred during logout.",
-            ),
-        },
-        examples=[
-            OpenApiExample(
-                "Request Example",
-                summary="Sample Request",
-                description="This is how the request body should look.",
-                value={"refresh": "<refresh_token>"},
-                request_only=True,
-            ),
-            OpenApiExample(
-                "Success Response",
-                summary="Successful Logout",
-                description="This is the response when logout is successful.",
-                value={"message": "Successfully logged out"},
-                response_only=True,
-            ),
-            OpenApiExample(
-                "Error Response",
-                summary="Error Case",
-                description="This is the response when the refresh token is invalid or missing.",
-                value={"error": "Refresh token is required"},
-                response_only=True,
-            ),
-        ],
-    )
+    # @extend_schema(
+    #     summary="Log Out User",
+    #     description=(
+    #         "Logs out the user by blacklisting the provided refresh token. "
+    #         "The user must be authenticated, and the `Authorization` header must include a valid access token in the format: `Bearer <access_token>`. "
+    #         "In the request body, provide the refresh token as `{ \"refresh\": \"<refresh_token>\" }`."
+    #     ),
+    #     request={
+    #         "application/json": {
+    #             "type": "object",
+    #             "properties": {
+    #                 "refresh": {
+    #                     "type": "string",
+    #                     "description": "The refresh token to be blacklisted for logout.",
+    #                 },
+    #             },
+    #             "required": ["refresh"],
+    #         }
+    #     },
+    #     parameters=[
+    #         OpenApiParameter(
+    #             name="Authorization",
+    #             location=OpenApiParameter.HEADER,
+    #             description="Bearer <access_token>",
+    #             required=True,
+    #             type=OpenApiTypes.STR,
+    #         ),
+    #     ],
+    #     responses={
+    #         205: OpenApiResponse(
+    #             response={
+    #                 "type": "object",
+    #                 "properties": {
+    #                     "message": {
+    #                         "type": "string",
+    #                         "example": "Successfully logged out",
+    #                     },
+    #                 },
+    #             },
+    #             description="Successfully logged out.",
+    #         ),
+    #         400: OpenApiResponse(
+    #             response={
+    #                 "type": "object",
+    #                 "properties": {
+    #                     "error": {
+    #                         "type": "string",
+    #                         "example": "Refresh token is required",
+    #                     },
+    #                 },
+    #             },
+    #             description="Error occurred during logout.",
+    #         ),
+    #     },
+    #     examples=[
+    #         OpenApiExample(
+    #             "Request Example",
+    #             summary="Sample Request",
+    #             description="This is how the request body should look.",
+    #             value={"refresh": "<refresh_token>"},
+    #             request_only=True,
+    #         ),
+    #         OpenApiExample(
+    #             "Success Response",
+    #             summary="Successful Logout",
+    #             description="This is the response when logout is successful.",
+    #             value={"message": "Successfully logged out"},
+    #             response_only=True,
+    #         ),
+    #         OpenApiExample(
+    #             "Error Response",
+    #             summary="Error Case",
+    #             description="This is the response when the refresh token is invalid or missing.",
+    #             value={"error": "Refresh token is required"},
+    #             response_only=True,
+    #         ),
+    #     ],
+    # )
     #endregion
     def create(self, request, *args, **kwargs):
         try:
@@ -179,21 +176,22 @@ class UserRegistrationView(generics.CreateAPIView):
         )
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = TokenObtainPairSerializer
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        try:
-            # Retrieve the user from the serializer context
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            user = serializer.user
-
-            # Update the last_login field
-            update_last_login(None, user)
-        except Exception as e:
-            return Response({"detail": "An error occurred while updating last_login."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        return response
+# class CustomTokenObtainPairView(TokenObtainPairView):
+#     serializer_class = TokenObtainPairSerializer
+#
+#     def post(self, request, *args, **kwargs):
+#         response = super().post(request, *args, **kwargs)
+#         try:
+#             # Retrieve the user from the serializer context
+#             serializer = self.get_serializer(data=request.data)
+#             serializer.is_valid(raise_exception=True)
+#             user = serializer.user
+#
+#             # Update the last_login field
+#             update_last_login(None, user)
+#         except Exception as e:
+#             return Response({"detail": "An error occurred while updating last_login."},
+#                             status=status.HTTP_400_BAD_REQUEST)
+#
+#         return response
+#
