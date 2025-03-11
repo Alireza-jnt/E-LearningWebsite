@@ -74,8 +74,8 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True)
     last_name = models.CharField(max_length=255, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    pending_email = models.EmailField(unique=True, null=True, blank=True)
-    pending_mobile = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    # pending_email = models.EmailField(unique=True, null=True, blank=True)
+    # pending_mobile = models.CharField(max_length=255, unique=True, blank=True, null=True)
     class Meta:
         db_table = 'users'
 
