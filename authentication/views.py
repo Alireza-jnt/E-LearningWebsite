@@ -1,6 +1,6 @@
 # from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiParameter, OpenApiResponse
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .serializers import UserSerializer, UserRegistrationSerializer
+from .serializers import UserSerializer, UserRegistrationSerializer, UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 # from rest_framework_simplejwt.views import TokenObtainPairView
 # from rest_framework.authentication import BasicAuthentication
@@ -9,19 +9,20 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # from drf_spectacular.types import OpenApiTypes
 # from django.shortcuts import render, redirect
 from rest_framework.response import Response
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
 # from rest_framework.views import APIView
 # from authentication.models import *
 # from django.http import request
 from django.urls import reverse
-from .models import User
+from .models import User, UserInformation
+from course.models.course_models import Author
 # from drf_spectacular.utils import (
 #     extend_schema,
 #     OpenApiParameter,
 #     OpenApiExample,
 # )
-
-
 
 # Create your views here.
 
@@ -56,7 +57,7 @@ class UserProfileView(generics.RetrieveAPIView):
 
 class LogoutView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
-    #region schema
+    # region schema
     # @extend_schema(
     #     summary="Log Out User",
     #     description=(
@@ -135,7 +136,7 @@ class LogoutView(generics.CreateAPIView):
     #         ),
     #     ],
     # )
-    #endregion
+    # endregion
     def create(self, request, *args, **kwargs):
         try:
             refresh_token = request.data.get("refresh")
@@ -175,6 +176,52 @@ class UserRegistrationView(generics.CreateAPIView):
             status=status.HTTP_201_CREATED
         )
 
+class UserProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['get', 'patch', 'delete']  # Only allow GET, PATCH and DELETE methods
+
+    def get_queryset(self):
+        # Only allow users to see their own profile
+        return User.objects.filter(pk=self.request.user.pk)
+
+    def get_object(self):
+        # Ensure users can only access their own profile
+        return get_object_or_404(User, pk=self.request.user.pk)
+
+    @action(detail=True, methods=['delete'])
+    def profile_picture(self, request, pk=None):
+        user = self.get_object()
+        try:
+            user_info = user.userinformation
+            if user_info.profile_picture:
+                user_info.profile_picture.delete()
+                user_info.profile_picture = None
+                user_info.save()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response({"detail": "No profile picture to delete"}, status=status.HTTP_404_NOT_FOUND)
+        except UserInformation.DoesNotExist:
+            return Response({"detail": "User information not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=True, methods=['delete'])
+    def author_bio(self, request, pk=None):
+        user = self.get_object()
+        try:
+            author = user.author
+            if author.bio:
+                author.bio = None
+                author.save()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response({"detail": "No author bio to delete"}, status=status.HTTP_404_NOT_FOUND)
+        except Author.DoesNotExist:
+            return Response({"detail": "User is not an author"}, status=status.HTTP_404_NOT_FOUND)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
 # class CustomTokenObtainPairView(TokenObtainPairView):
 #     serializer_class = TokenObtainPairSerializer
@@ -194,4 +241,3 @@ class UserRegistrationView(generics.CreateAPIView):
 #                             status=status.HTTP_400_BAD_REQUEST)
 #
 #         return response
-#
